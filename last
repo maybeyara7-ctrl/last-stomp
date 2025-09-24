@@ -1,0 +1,63 @@
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Name = "LeaveGameGui"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(0, 120, 0, 40)
+btn.Position = UDim2.new(0.5, -60, 0.5, -20)
+btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black
+btn.TextColor3 = Color3.fromRGB(255, 255, 255) -- White
+btn.Text = "LAST"
+btn.Font = Enum.Font.SourceSansBold
+btn.TextSize = 20
+btn.Parent = gui
+
+-- Variables to track dragging
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+local function updatePosition(input)
+    local delta = input.Position - dragStart
+    btn.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
+end
+
+btn.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or
+       input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = btn.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+btn.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or
+       input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        updatePosition(input)
+    end
+end)
+
+btn.MouseButton1Click:Connect(function()
+    player:Kick("You left the game.")
+end)
