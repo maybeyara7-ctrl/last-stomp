@@ -1,0 +1,30 @@
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Name = "LeaveGameGui"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- Create a draggable Frame to hold the button
+local holder = Instance.new("Frame")
+holder.Size = UDim2.new(0, 120, 0, 40)
+holder.Position = UDim2.new(0.5, -60, 0.5, -20)
+holder.BackgroundTransparency = 1
+holder.Active = true
+holder.Draggable = true -- 👈 Make draggable
+holder.Parent = gui
+
+-- Create the button inside the draggable frame
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(1, 0, 1, 0)
+btn.Position = UDim2.new(0, 0, 0, 0)
+btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black
+btn.TextColor3 = Color3.fromRGB(255, 255, 255) -- White
+btn.Text = "LAST"
+btn.Font = Enum.Font.SourceSansBold
+btn.TextSize = 20
+btn.Parent = holder
+
+-- Kick player on click
+btn.MouseButton1Click:Connect(function()
+    player:Kick("You left the game.")
+end)
